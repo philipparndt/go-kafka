@@ -44,18 +44,25 @@ func DeserializePayload(srClient *srclient.SchemaRegistryClient, payload []byte)
 		return nil, schema, err
 	}
 
-	schemaType := schema.SchemaType().String()
-	switch schemaType {
-	case srclient.Avro.String():
-		var value []byte
-		value, err = deserializeAvro(schema, payload[5:])
-		if err != nil {
-			return nil, schema, err
-		}
-		return value, schema, nil
-	default:
-		return nil, schema, fmt.Errorf("unsupported schema type: %s", schemaType)
+	var value []byte
+	value, err = deserializeAvro(schema, payload[5:])
+	if err != nil {
+		return nil, schema, err
 	}
+	return value, schema, nil
+
+	//schemaType := schema.SchemaType().String()
+	//switch schemaType {
+	//case srclient.Avro.String():
+	//	var value []byte
+	//	value, err = deserializeAvro(schema, payload[5:])
+	//	if err != nil {
+	//		return nil, schema, err
+	//	}
+	//	return value, schema, nil
+	//default:
+	//	return nil, schema, fmt.Errorf("unsupported schema type: %s", schemaType)
+	//}
 }
 
 func SchemaName(schema *srclient.Schema) (string, error) {

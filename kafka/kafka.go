@@ -5,7 +5,6 @@ import (
 	"crypto/x509"
 	"fmt"
 	"github.com/IBM/sarama"
-	"github.com/philipparndt/go-logger"
 	"github.com/riferrei/srclient"
 	"log"
 	"os"
@@ -43,15 +42,11 @@ func (cfg *KafkaConf) NewConsumer(id string) (sarama.Consumer, error) {
 func (cfg *KafkaConf) NewKafka() (sarama.Consumer, *srclient.SchemaRegistryClient, error) {
 	consumer, err := cfg.NewConsumer("kaftail-vehubtoken-consumer")
 	if err != nil {
-		logger.Error("Error creating consumer:", err)
-		os.Exit(1)
 		return nil, nil, err
 	}
 
 	schemaRegistryClient, err := cfg.NewSchemaRegistryClient()
 	if err != nil {
-		logger.Error("Error creating schema registry client:", err)
-		os.Exit(1)
 		return nil, nil, err
 	}
 
@@ -61,14 +56,11 @@ func (cfg *KafkaConf) NewKafka() (sarama.Consumer, *srclient.SchemaRegistryClien
 func (cfg *KafkaConf) StartConsume(topic string) (sarama.PartitionConsumer, *srclient.SchemaRegistryClient, error) {
 	consumer, schemaRegistryClient, err := cfg.NewKafka()
 	if err != nil {
-		logger.Error("Error creating consumer:", err)
-		os.Exit(1)
 		return nil, nil, err
 	}
 
 	partitionConsumer, err := consumer.ConsumePartition(topic, 0, sarama.OffsetOldest)
 	if err != nil {
-		log.Fatal("Error creating partition consumer:", err)
 		return nil, nil, err
 	}
 
@@ -111,12 +103,10 @@ func (tlsConf *TLSConf) MakeTLSConfig() (*tls.Config, error) {
 }
 
 func (conf *SchemaRegistryConf) MakeSchemaRegistryURL() string {
-	logger.Info("Schema Registry Conf: ", conf)
 	if conf.URL == "" {
 		return ""
 	}
 
 	url := fmt.Sprintf("%s://%s", conf.Scheme, conf.URL)
-	logger.Info("Schema Registry URL: ", url)
 	return url
 }
